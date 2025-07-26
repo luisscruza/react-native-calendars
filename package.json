@@ -5,10 +5,11 @@
   "types": "dist/index.d.ts",
   "description": "React Native Calendar Components",
   "scripts": {
-    "build": "yarn build:ts && yarn build:docs",
+    "build": "yarn build:ts && yarn copy-static",
     "build:ts": "tsc",
     "build:dev": "tsc --noEmit",
     "build:docs": "node ./scripts/build-docs.js",
+      "copy-static": "node scripts/copy-statics.js",
     "e2e": "node ./scripts/test-e2e.js --release",
     "test": "yarn lint && yarn unit",
     "test:watch": "jest --watch",
