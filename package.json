@@ -1,8 +1,8 @@
 {
   "name": "react-native-calendars",
   "version": "1.22.0",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "description": "React Native Calendar Components",
   "scripts": {
     "build": "yarn build:ts && yarn build:docs",
@@ -65,7 +65,7 @@
     "babel-eslint": "^10.1.0",
     "babel-jest": "^29.6.3",
     "babel-plugin-module-resolver": "^5.0.2",
-    "detox": "^18.0.0",
+    "detox": "^20.40.2",
     "eslint": "8.19.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-jest": "^26.0.0",
@@ -78,7 +78,7 @@
     "jest-date-mock": "^1.0.8",
     "lint-staged": "^10.2.11",
     "metro-react-native-babel-preset": "0.73.7",
-    "mocha": "^7.1.0",
+    "mocha": "^11.7.1",
     "prettier": "2.8.8",
     "prettier-eslint": "^16.3.0",
     "react": "18.2.0",
