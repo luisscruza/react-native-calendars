@@ -170,7 +170,10 @@ const CalendarList = (props, ref) => {
         shouldMeasureHeader.current = false;
         return (React.createElement(CalendarListItem, Object.assign({}, calendarProps, { testID: testId, markedDates: getMarkedDatesForItem(item), item: item, style: calendarStyle, 
             // @ts-expect-error - type mismatch - ScrollView's 'horizontal' is nullable
-            horizontal: horizontal, calendarWidth: calendarWidth, calendarHeight: calendarHeight, scrollToMonth: scrollToMonth, visible: isDateInRange(item), onHeaderLayout: onHeaderLayoutToPass })));
+            horizontal: horizontal, 
+            // calendarWidth={calendarWidth}
+            // calendarHeight={calendarHeight}
+            scrollToMonth: scrollToMonth, visible: isDateInRange(item), onHeaderLayout: onHeaderLayoutToPass })));
     }, [horizontal, calendarStyle, calendarWidth, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
     const renderStaticHeader = () => {
         if (shouldUseStaticHeader) {

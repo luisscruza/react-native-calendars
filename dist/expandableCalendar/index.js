@@ -430,7 +430,6 @@ const ExpandableCalendar = forwardRef((props, ref) => {
     };
     const renderCalendarList = () => {
         return (React.createElement(React.Fragment, null,
-            React.createElement(Text, null, "CalendarList removed for testing purposes"),
             React.createElement(CalendarList, Object.assign({ testID: `${testID}.calendarList`, horizontal: horizontal, firstDay: firstDay, calendarStyle: calendarStyle, onHeaderLayout: onHeaderLayout }, others, { current: date, theme: themeObject, ref: calendarList, onDayPress: _onDayPress, onVisibleMonthsChange: onVisibleMonthsChange, pagingEnabled: true, scrollEnabled: isOpen, hideArrows: shouldHideArrows, onPressArrowLeft: _onPressArrowLeft, onPressArrowRight: _onPressArrowRight, hideExtraDays: !horizontal && isOpen, renderArrow: _renderArrow, staticHeader: true, numberOfDays: numberOfDays, headerStyle: _headerStyle, timelineLeftInset: timelineLeftInset, context: _context }))));
     };
     return (React.createElement(View, { testID: testID, style: containerStyle }, screenReaderEnabled ? (React.createElement(Calendar, Object.assign({ testID: `${testID}.calendarAccessible` }, others, { theme: themeObject, onHeaderLayout: onHeaderLayout, onDayPress: _onDayPress, hideExtraDays: true, renderArrow: _renderArrow }))) : (React.createElement(Animated.View, Object.assign({ testID: `${testID}.expandableContainer`, ref: wrapper, style: wrapperStyle, onLayout: shouldMeasureHeader.current ? onHeaderLayout : undefined }, panResponder.panHandlers),

@@ -2,7 +2,7 @@ import findIndex from 'lodash/findIndex';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
 import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
-import {AccessibilityInfo, FlatList, FlatListProps, View, ViewStyle} from 'react-native';
+import {AccessibilityInfo, FlatList, FlatListProps, Text, View, ViewStyle} from 'react-native';
 
 import {extractCalendarProps, extractHeaderProps} from '../componentUpdater';
 import {parseDate, toMarkingFormat, xdateToData} from '../interface';
@@ -247,20 +247,23 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
     const onHeaderLayoutToPass = shouldMeasureHeader.current ? onHeaderLayout : undefined;
     shouldMeasureHeader.current = false;
     return (
+      <>
+      <Text>Debug {item.toString()}</Text>
       <CalendarListItem
         {...calendarProps}
-        testID={testId}
+        // testID={testId}
         markedDates={getMarkedDatesForItem(item)}
         item={item}
-        style={calendarStyle}
+        // style={calendarStyle}
         // @ts-expect-error - type mismatch - ScrollView's 'horizontal' is nullable
         horizontal={horizontal}
-        calendarWidth={calendarWidth}
-        calendarHeight={calendarHeight}
+        // calendarWidth={calendarWidth}
+        // calendarHeight={calendarHeight}
         scrollToMonth={scrollToMonth}
         visible={isDateInRange(item)}
         onHeaderLayout={onHeaderLayoutToPass}
       />
+      </>
     );
   }, [horizontal, calendarStyle, calendarWidth, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
 

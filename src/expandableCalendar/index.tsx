@@ -611,7 +611,6 @@ const ExpandableCalendar = forwardRef<ExpandableCalendarRef, ExpandableCalendarP
   const renderCalendarList = () => {
     return (
       <>
-      <Text>CalendarList removed for testing purposes</Text>
       <CalendarList
         testID={`${testID}.calendarList`}
         horizontal={horizontal}
