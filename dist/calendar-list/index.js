@@ -18,13 +18,10 @@ const CALENDAR_HEIGHT = 360;
 const PAST_SCROLL_RANGE = 50;
 const FUTURE_SCROLL_RANGE = 50;
 /**
- * @description: Calendar List component for both vertical and horizontal calendars
- * @extends: Calendar
- * @extendslink: docs/Calendar
- * @example: https://github.com/wix/react-native-calendars/blob/master/example/src/screens/calendarsList.js
- * @gif: https://github.com/wix/react-native-calendars/blob/master/demo/assets/calendar-list.gif
+ * Calendar List component for both vertical and horizontal calendars
  */
 const CalendarList = (props, ref) => {
+    var _a;
     useImperativeHandle(ref, () => ({
         scrollToDay: (date, offset, animated) => {
             scrollToDay(date, offset, animated);
@@ -39,21 +36,33 @@ const CalendarList = (props, ref) => {
     /** CalendarList props */
     pastScrollRange = PAST_SCROLL_RANGE, futureScrollRange = FUTURE_SCROLL_RANGE, calendarHeight = CALENDAR_HEIGHT, calendarWidth = CALENDAR_WIDTH, calendarStyle, animateScroll = false, showScrollIndicator = false, staticHeader, 
     /** View props */
-    testID, style: propsStyle, onLayout, removeClippedSubviews, 
+    testID, style: propsStyle, onLayout, // consumer's onLayout
+    removeClippedSubviews, 
     /** ScrollView props */
     horizontal = false, pagingEnabled, scrollEnabled = true, nestedScrollEnabled = true, scrollsToTop = false, keyExtractor = (_, index) => String(index), keyboardShouldPersistTaps, onScrollBeginDrag, onScrollEndDrag, onMomentumScrollBegin, onMomentumScrollEnd, 
     /** FlatList props */
     contentContainerStyle, onEndReachedThreshold, onEndReached, onHeaderLayout, accessibilityElementsHidden, importantForAccessibility } = props;
     const calendarProps = extractCalendarProps(props);
     const headerProps = extractHeaderProps(props);
-    const calendarSize = horizontal ? calendarWidth : calendarHeight;
+    // --- Measure actual width to make getItemLayout offsets exact (RN 0.81 timing) ---
+    const [measuredWidth, setMeasuredWidth] = useState(null);
+    const handleContainerLayout = useCallback((e) => {
+        var _a, _b, _c;
+        const w = (_c = (_b = (_a = e === null || e === void 0 ? void 0 : e.nativeEvent) === null || _a === void 0 ? void 0 : _a.layout) === null || _b === void 0 ? void 0 : _b.width) !== null && _c !== void 0 ? _c : 0;
+        if (horizontal && w > 0 && w !== measuredWidth) {
+            setMeasuredWidth(w);
+        }
+        onLayout === null || onLayout === void 0 ? void 0 : onLayout(e); // preserve external onLayout
+    }, [horizontal, measuredWidth, onLayout]);
+    // Resolve width/height for item size
+    const resolvedCalendarWidth = horizontal
+        ? (_a = measuredWidth !== null && measuredWidth !== void 0 ? measuredWidth : calendarWidth) !== null && _a !== void 0 ? _a : CALENDAR_WIDTH
+        : calendarWidth !== null && calendarWidth !== void 0 ? calendarWidth : CALENDAR_WIDTH;
+    const calendarSize = horizontal ? (resolvedCalendarWidth !== null && resolvedCalendarWidth !== void 0 ? resolvedCalendarWidth : CALENDAR_WIDTH) : calendarHeight;
     const shouldUseStaticHeader = staticHeader && horizontal;
     const [currentMonth, setCurrentMonth] = useState(parseDate(current));
     const shouldFixRTL = useMemo(() => !constants.isRN73() && constants.isAndroidRTL && horizontal, [horizontal]);
-    /**
-     * we render a lot of months in the calendar list and we need to measure the header only once
-     * so we use this ref to limit the header measurement to the first render
-     */
+    // Measure header once
     const shouldMeasureHeader = useRef(true);
     const style = useRef(styleConstructor(theme));
     const list = useRef();
@@ -90,6 +99,7 @@ const CalendarList = (props, ref) => {
         if (current) {
             scrollToMonth(new XDate(current));
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [current]);
     useDidUpdate(() => {
         const currMont = currentMonth === null || currentMonth === void 0 ? void 0 : currentMonth.clone();
@@ -124,7 +134,8 @@ const CalendarList = (props, ref) => {
         var _a, _b;
         const scrollTo = parseDate(date);
         const diffMonths = Math.round((_a = initialDate === null || initialDate === void 0 ? void 0 : initialDate.current) === null || _a === void 0 ? void 0 : _a.clone().setDate(1).diffMonths(scrollTo === null || scrollTo === void 0 ? void 0 : scrollTo.clone().setDate(1)));
-        const scrollAmount = calendarSize * (shouldFixRTL ? pastScrollRange - diffMonths : pastScrollRange + diffMonths);
+        const scrollAmount = calendarSize *
+            (shouldFixRTL ? pastScrollRange - diffMonths : pastScrollRange + diffMonths);
         if (scrollAmount !== 0) {
             (_b = list === null || list === void 0 ? void 0 : list.current) === null || _b === void 0 ? void 0 : _b.scrollToOffset({ offset: scrollAmount, animated: animateScroll });
         }
@@ -136,7 +147,7 @@ const CalendarList = (props, ref) => {
         }
         scrollToMonth(day);
         setCurrentMonth(day);
-    }, [currentMonth, scrollToMonth]);
+    }, [currentMonth, scrollToMonth, getDateIndex]);
     const getMarkedDatesForItem = useCallback((item) => {
         if (markedDates && item) {
             for (const [key, _] of Object.entries(markedDates)) {
@@ -147,12 +158,10 @@ const CalendarList = (props, ref) => {
         }
     }, [markedDates]);
     const getItemLayout = useCallback((_, index) => {
-        return {
-            length: calendarSize,
-            offset: calendarSize * index,
-            index
-        };
-    }, []);
+        // Round to avoid fractional offsets that can drift across pages
+        const item = Math.round(calendarSize || 0);
+        return { length: item, offset: item * index, index };
+    }, [calendarSize]);
     const isDateInRange = useCallback((date) => {
         for (let i = -range.current; i <= range.current; i++) {
             const newMonth = currentMonth === null || currentMonth === void 0 ? void 0 : currentMonth.clone().addMonths(i, true);
@@ -170,14 +179,26 @@ const CalendarList = (props, ref) => {
         shouldMeasureHeader.current = false;
         return (React.createElement(CalendarListItem, Object.assign({}, calendarProps, { testID: testId, markedDates: getMarkedDatesForItem(item), item: item, style: calendarStyle, 
             // @ts-expect-error - type mismatch - ScrollView's 'horizontal' is nullable
-            horizontal: horizontal, calendarWidth: calendarWidth, calendarHeight: calendarHeight, scrollToMonth: scrollToMonth, visible: isDateInRange(item), onHeaderLayout: onHeaderLayoutToPass })));
-    }, [horizontal, calendarStyle, calendarWidth, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
+            horizontal: horizontal, calendarWidth: resolvedCalendarWidth, calendarHeight: calendarHeight, scrollToMonth: scrollToMonth, visible: isDateInRange(item), onHeaderLayout: onHeaderLayoutToPass })));
+    }, [
+        horizontal,
+        calendarStyle,
+        resolvedCalendarWidth,
+        testID,
+        getMarkedDatesForItem,
+        isDateInRange,
+        calendarProps,
+        calendarHeight,
+        scrollToMonth,
+        onHeaderLayout
+    ]);
     const renderStaticHeader = () => {
         if (shouldUseStaticHeader) {
             const onHeaderLayoutToPass = shouldMeasureHeader.current ? onHeaderLayout : undefined;
             shouldMeasureHeader.current = false;
             return (React.createElement(CalendarHeader, Object.assign({}, headerProps, { testID: `${testID}.staticHeader`, style: staticHeaderStyle, month: currentMonth, addMonth: addMonth, onHeaderLayout: onHeaderLayoutToPass, accessibilityElementsHidden: accessibilityElementsHidden, importantForAccessibility: importantForAccessibility })));
         }
+        return null;
     };
     /** Viewable month */
     const viewabilityConfig = useRef({
@@ -205,8 +226,15 @@ const CalendarList = (props, ref) => {
             onViewableItemsChanged
         }
     ]);
-    return (React.createElement(View, { style: style.current.flatListContainer, testID: testID },
-        React.createElement(FlatList, { ref: list, windowSize: shouldFixRTL ? pastScrollRange + futureScrollRange + 1 : undefined, style: listStyle, showsVerticalScrollIndicator: showScrollIndicator, showsHorizontalScrollIndicator: showScrollIndicator, data: items, renderItem: renderItem, getItemLayout: getItemLayout, initialNumToRender: range.current, initialScrollIndex: initialDateIndex, viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current, testID: `${testID}.list`, onLayout: onLayout, removeClippedSubviews: removeClippedSubviews, pagingEnabled: pagingEnabled, scrollEnabled: scrollEnabled, scrollsToTop: scrollsToTop, horizontal: horizontal, keyboardShouldPersistTaps: keyboardShouldPersistTaps, keyExtractor: keyExtractor, onEndReachedThreshold: onEndReachedThreshold, onEndReached: onEndReached, nestedScrollEnabled: nestedScrollEnabled, onMomentumScrollBegin: onMomentumScrollBegin, onMomentumScrollEnd: onMomentumScrollEnd, onScrollBeginDrag: onScrollBeginDrag, onScrollEndDrag: onScrollEndDrag, contentContainerStyle: contentContainerStyle }),
+    return (React.createElement(View, { style: style.current.flatListContainer, testID: testID, onLayout: handleContainerLayout },
+        // Gate horizontal render until we have a real width to prevent wrong offsets
+        (!horizontal || measuredWidth) && (React.createElement(FlatList, { ref: list, windowSize: shouldFixRTL ? pastScrollRange + futureScrollRange + 1 : undefined, style: listStyle, showsVerticalScrollIndicator: showScrollIndicator, showsHorizontalScrollIndicator: showScrollIndicator, data: items, renderItem: renderItem, getItemLayout: getItemLayout, initialNumToRender: range.current, initialScrollIndex: initialDateIndex, viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current, testID: `${testID}.list`, removeClippedSubviews: removeClippedSubviews, pagingEnabled: pagingEnabled, scrollEnabled: scrollEnabled, scrollsToTop: scrollsToTop, horizontal: horizontal, keyboardShouldPersistTaps: keyboardShouldPersistTaps, keyExtractor: keyExtractor, onEndReachedThreshold: onEndReachedThreshold, onEndReached: onEndReached, nestedScrollEnabled: nestedScrollEnabled, onMomentumScrollBegin: onMomentumScrollBegin, onMomentumScrollEnd: onMomentumScrollEnd, onScrollBeginDrag: onScrollBeginDrag, onScrollEndDrag: onScrollEndDrag, contentContainerStyle: contentContainerStyle, onScrollToIndexFailed: (info) => {
+                // Retry once layout/measurement is ready
+                requestAnimationFrame(() => {
+                    var _a;
+                    (_a = list.current) === null || _a === void 0 ? void 0 : _a.scrollToIndex({ index: info.index, animated: false });
+                });
+            } })),
         renderStaticHeader()));
 };
 export default forwardRef(CalendarList);
