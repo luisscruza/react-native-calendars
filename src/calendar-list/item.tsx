@@ -32,6 +32,15 @@ const CalendarListItem = React.memo((props: CalendarListItemProps) => {
     visible
   } = props;
 
+  console.log('CalendarListItem render:', {
+    dateString: toMarkingFormat(item),
+    visible,
+    calendarWidth,
+    calendarHeight,
+    horizontal,
+    item: item?.toString()
+  });
+
   const style = useRef(styleConstructor(theme));
   
   const calendarProps = extractCalendarProps(props);
@@ -82,11 +91,13 @@ const CalendarListItem = React.memo((props: CalendarListItemProps) => {
   }, [onPressArrowRight, scrollToMonth]);
 
   if (!visible) {
+    console.log('CalendarListItem not visible, rendering placeholder text for:', dateString);
     return (
       <Text style={textStyle}>{dateString}</Text>
     );
   }
 
+  console.log('CalendarListItem visible, rendering Calendar for:', dateString);
   return (
     <Calendar
       hideArrows={true}

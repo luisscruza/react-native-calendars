@@ -132,6 +132,14 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
       const rangeDate = initialDate.current?.clone().addMonths(i - pastScrollRange, true);
       months.push(rangeDate);
     }
+    console.log('CalendarList items generated:', {
+      totalItems: months.length,
+      pastScrollRange,
+      futureScrollRange,
+      initialDate: initialDate.current?.toString(),
+      firstItem: months[0]?.toString(),
+      lastItem: months[months.length - 1]?.toString()
+    });
     return months;
   }, [pastScrollRange, futureScrollRange]);
 
@@ -246,6 +254,16 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
     const testId = `${testID}.item_${year}-${month}`;
     const onHeaderLayoutToPass = shouldMeasureHeader.current ? onHeaderLayout : undefined;
     shouldMeasureHeader.current = false;
+    
+    console.log('CalendarList renderItem:', {
+      dateString,
+      testId,
+      item: item.toString(),
+      visible: isDateInRange(item),
+      calendarProps: Object.keys(calendarProps),
+      markedDates: getMarkedDatesForItem(item)
+    });
+    
     return (
       <>
       <Text>Debug {item.toString()}</Text>
@@ -254,18 +272,18 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
         testID={testId}
         markedDates={getMarkedDatesForItem(item)}
         item={item}
-        // style={calendarStyle}
+        style={calendarStyle}
         // @ts-expect-error - type mismatch - ScrollView's 'horizontal' is nullable
         horizontal={horizontal}
-        // calendarWidth={calendarWidth}
-        // calendarHeight={calendarHeight}
+        calendarWidth={calendarWidth}
+        calendarHeight={calendarHeight}
         scrollToMonth={scrollToMonth}
         visible={isDateInRange(item)}
         onHeaderLayout={onHeaderLayoutToPass}
       />
       </>
     );
-  }, [horizontal, calendarStyle, calendarWidth, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
+  }, [horizontal, calendarStyle, calendarWidth, calendarHeight, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
 
   const renderStaticHeader = () => {
     if (shouldUseStaticHeader) {
@@ -313,6 +331,15 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
       onViewableItemsChanged
     }
   ]);
+
+  console.log('CalendarList render:', {
+    itemsLength: items.length,
+    initialDateIndex,
+    currentMonth: currentMonth?.toString(),
+    calendarSize,
+    horizontal,
+    listStyle: listStyle
+  });
 
   return (
     <View style={style.current.flatListContainer} testID={testID}>

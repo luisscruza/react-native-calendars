@@ -6,6 +6,14 @@ import styleConstructor from './style';
 import Calendar from '../calendar';
 const CalendarListItem = React.memo((props) => {
     const { item, theme, scrollToMonth, horizontal, calendarHeight, calendarWidth, style: propsStyle, headerStyle, onPressArrowLeft, onPressArrowRight, visible } = props;
+    console.log('CalendarListItem render:', {
+        dateString: toMarkingFormat(item),
+        visible,
+        calendarWidth,
+        calendarHeight,
+        horizontal,
+        item: item === null || item === void 0 ? void 0 : item.toString()
+    });
     const style = useRef(styleConstructor(theme));
     const calendarProps = extractCalendarProps(props);
     const dateString = toMarkingFormat(item);
