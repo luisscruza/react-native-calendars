@@ -126,22 +126,21 @@ const ExpandableCalendar = forwardRef((props, ref) => {
     /** Position */
     const [position, setPosition] = useState(numberOfDays ? Positions.CLOSED : initialPosition);
     const isOpen = position === Positions.OPEN;
-    const getOpenHeight = useCallback(() => {
+    const getOpenHeight = () => {
         if (!horizontal) {
             return Math.max(constants.screenHeight, constants.screenWidth);
         }
         return headerHeight + (WEEK_HEIGHT * (numberOfWeeks.current)) + (hideKnob ? 0 : KNOB_CONTAINER_HEIGHT);
-    }, [headerHeight, horizontal, hideKnob, numberOfWeeks]);
+    };
     const openHeight = useRef(getOpenHeight());
     const closedHeight = useMemo(() => headerHeight + WEEK_HEIGHT + (hideKnob || Number(numberOfDays) > 1 ? 0 : KNOB_CONTAINER_HEIGHT), [numberOfDays, hideKnob, headerHeight]);
-    const startHeight = useMemo(() => isOpen ? getOpenHeight() : closedHeight, [closedHeight, isOpen, getOpenHeight]);
+    const startHeight = useMemo(() => isOpen ? openHeight.current : closedHeight, [closedHeight, isOpen]);
     const _height = useRef(startHeight);
     const deltaY = useMemo(() => new Animated.Value(startHeight), [startHeight]);
     const headerDeltaY = useRef(new Animated.Value(isOpen ? -headerHeight : 0));
     useEffect(() => {
         _height.current = startHeight;
         deltaY.setValue(startHeight);
-        _wrapperStyles.current.style.height = startHeight;
     }, [startHeight]);
     useEffect(() => {
         openHeight.current = getOpenHeight();
@@ -429,8 +428,7 @@ const ExpandableCalendar = forwardRef((props, ref) => {
                 : true, importantForAccessibility: 'no-hide-descendants' }))));
     };
     const renderCalendarList = () => {
-        return (React.createElement(React.Fragment, null,
-            React.createElement(CalendarList, Object.assign({ testID: `${testID}.calendarList`, horizontal: horizontal, firstDay: firstDay, calendarStyle: calendarStyle, onHeaderLayout: onHeaderLayout }, others, { current: date, theme: themeObject, ref: calendarList, onDayPress: _onDayPress, onVisibleMonthsChange: onVisibleMonthsChange, pagingEnabled: true, scrollEnabled: isOpen, hideArrows: shouldHideArrows, onPressArrowLeft: _onPressArrowLeft, onPressArrowRight: _onPressArrowRight, hideExtraDays: !horizontal && isOpen, renderArrow: _renderArrow, staticHeader: true, numberOfDays: numberOfDays, headerStyle: _headerStyle, timelineLeftInset: timelineLeftInset, context: _context }))));
+        return (React.createElement(CalendarList, Object.assign({ testID: `${testID}.calendarList`, horizontal: horizontal, firstDay: firstDay, calendarStyle: calendarStyle, onHeaderLayout: onHeaderLayout }, others, { current: date, theme: themeObject, ref: calendarList, onDayPress: _onDayPress, onVisibleMonthsChange: onVisibleMonthsChange, pagingEnabled: true, scrollEnabled: isOpen, hideArrows: shouldHideArrows, onPressArrowLeft: _onPressArrowLeft, onPressArrowRight: _onPressArrowRight, hideExtraDays: !horizontal && isOpen, renderArrow: _renderArrow, staticHeader: true, numberOfDays: numberOfDays, headerStyle: _headerStyle, timelineLeftInset: timelineLeftInset, context: _context })));
     };
     return (React.createElement(View, { testID: testID, style: containerStyle }, screenReaderEnabled ? (React.createElement(Calendar, Object.assign({ testID: `${testID}.calendarAccessible` }, others, { theme: themeObject, onHeaderLayout: onHeaderLayout, onDayPress: _onDayPress, hideExtraDays: true, renderArrow: _renderArrow }))) : (React.createElement(Animated.View, Object.assign({ testID: `${testID}.expandableContainer`, ref: wrapper, style: wrapperStyle, onLayout: shouldMeasureHeader.current ? onHeaderLayout : undefined }, panResponder.panHandlers),
         renderCalendarList(),

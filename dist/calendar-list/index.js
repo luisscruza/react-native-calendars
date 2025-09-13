@@ -2,7 +2,7 @@ import findIndex from 'lodash/findIndex';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { AccessibilityInfo, FlatList, Text, View } from 'react-native';
+import { AccessibilityInfo, FlatList, View } from 'react-native';
 import { extractCalendarProps, extractHeaderProps } from '../componentUpdater';
 import { parseDate, toMarkingFormat, xdateToData } from '../interface';
 import { page, sameDate, sameMonth } from '../dateutils';
@@ -61,20 +61,12 @@ const CalendarList = (props, ref) => {
     const initialDate = useRef(parseDate(current) || new XDate());
     const visibleMonth = useRef(currentMonth);
     const items = useMemo(() => {
-        var _a, _b, _c, _d;
+        var _a;
         const months = [];
         for (let i = 0; i <= pastScrollRange + futureScrollRange; i++) {
             const rangeDate = (_a = initialDate.current) === null || _a === void 0 ? void 0 : _a.clone().addMonths(i - pastScrollRange, true);
             months.push(rangeDate);
         }
-        console.log('CalendarList items generated:', {
-            totalItems: months.length,
-            pastScrollRange,
-            futureScrollRange,
-            initialDate: (_b = initialDate.current) === null || _b === void 0 ? void 0 : _b.toString(),
-            firstItem: (_c = months[0]) === null || _c === void 0 ? void 0 : _c.toString(),
-            lastItem: (_d = months[months.length - 1]) === null || _d === void 0 ? void 0 : _d.toString()
-        });
         return months;
     }, [pastScrollRange, futureScrollRange]);
     const staticHeaderStyle = useMemo(() => {
@@ -162,22 +154,13 @@ const CalendarList = (props, ref) => {
         };
     }, []);
     const isDateInRange = useCallback((date) => {
-        const result = (() => {
-            for (let i = -range.current; i <= range.current; i++) {
-                const newMonth = currentMonth === null || currentMonth === void 0 ? void 0 : currentMonth.clone().addMonths(i, true);
-                if (sameMonth(date, newMonth)) {
-                    return true;
-                }
+        for (let i = -range.current; i <= range.current; i++) {
+            const newMonth = currentMonth === null || currentMonth === void 0 ? void 0 : currentMonth.clone().addMonths(i, true);
+            if (sameMonth(date, newMonth)) {
+                return true;
             }
-            return false;
-        })();
-        console.log('isDateInRange check:', {
-            date: date === null || date === void 0 ? void 0 : date.toString(),
-            currentMonth: currentMonth === null || currentMonth === void 0 ? void 0 : currentMonth.toString(),
-            range: range.current,
-            result
-        });
-        return result;
+        }
+        return false;
     }, [currentMonth]);
     const renderItem = useCallback(({ item }) => {
         const dateString = toMarkingFormat(item);
@@ -185,22 +168,10 @@ const CalendarList = (props, ref) => {
         const testId = `${testID}.item_${year}-${month}`;
         const onHeaderLayoutToPass = shouldMeasureHeader.current ? onHeaderLayout : undefined;
         shouldMeasureHeader.current = false;
-        console.log('CalendarList renderItem:', {
-            dateString,
-            testId,
-            item: item.toString(),
-            visible: isDateInRange(item),
-            calendarProps: Object.keys(calendarProps),
-            markedDates: getMarkedDatesForItem(item)
-        });
-        return (React.createElement(React.Fragment, null,
-            React.createElement(Text, null,
-                "Debug ",
-                item.toString()),
-            React.createElement(CalendarListItem, Object.assign({}, calendarProps, { testID: testId, markedDates: getMarkedDatesForItem(item), item: item, style: calendarStyle, 
-                // @ts-expect-error - type mismatch - ScrollView's 'horizontal' is nullable
-                horizontal: horizontal, calendarWidth: calendarWidth, calendarHeight: calendarHeight, scrollToMonth: scrollToMonth, visible: isDateInRange(item), onHeaderLayout: onHeaderLayoutToPass }))));
-    }, [horizontal, calendarStyle, calendarWidth, calendarHeight, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
+        return (React.createElement(CalendarListItem, Object.assign({}, calendarProps, { testID: testId, markedDates: getMarkedDatesForItem(item), item: item, style: calendarStyle, 
+            // @ts-expect-error - type mismatch - ScrollView's 'horizontal' is nullable
+            horizontal: horizontal, calendarWidth: calendarWidth, calendarHeight: calendarHeight, scrollToMonth: scrollToMonth, visible: isDateInRange(item), onHeaderLayout: onHeaderLayoutToPass })));
+    }, [horizontal, calendarStyle, calendarWidth, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
     const renderStaticHeader = () => {
         if (shouldUseStaticHeader) {
             const onHeaderLayoutToPass = shouldMeasureHeader.current ? onHeaderLayout : undefined;
@@ -234,14 +205,6 @@ const CalendarList = (props, ref) => {
             onViewableItemsChanged
         }
     ]);
-    console.log('CalendarList render:', {
-        itemsLength: items.length,
-        initialDateIndex,
-        currentMonth: currentMonth === null || currentMonth === void 0 ? void 0 : currentMonth.toString(),
-        calendarSize,
-        horizontal,
-        listStyle: listStyle
-    });
     return (React.createElement(View, { style: style.current.flatListContainer, testID: testID },
         React.createElement(FlatList, { ref: list, windowSize: shouldFixRTL ? pastScrollRange + futureScrollRange + 1 : undefined, style: listStyle, showsVerticalScrollIndicator: showScrollIndicator, showsHorizontalScrollIndicator: showScrollIndicator, data: items, renderItem: renderItem, getItemLayout: getItemLayout, initialNumToRender: range.current, initialScrollIndex: initialDateIndex, viewabilityConfigCallbackPairs: viewabilityConfigCallbackPairs.current, testID: `${testID}.list`, onLayout: onLayout, removeClippedSubviews: removeClippedSubviews, pagingEnabled: pagingEnabled, scrollEnabled: scrollEnabled, scrollsToTop: scrollsToTop, horizontal: horizontal, keyboardShouldPersistTaps: keyboardShouldPersistTaps, keyExtractor: keyExtractor, onEndReachedThreshold: onEndReachedThreshold, onEndReached: onEndReached, nestedScrollEnabled: nestedScrollEnabled, onMomentumScrollBegin: onMomentumScrollBegin, onMomentumScrollEnd: onMomentumScrollEnd, onScrollBeginDrag: onScrollBeginDrag, onScrollEndDrag: onScrollEndDrag, contentContainerStyle: contentContainerStyle }),
         renderStaticHeader()));

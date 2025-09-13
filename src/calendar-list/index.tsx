@@ -2,7 +2,7 @@ import findIndex from 'lodash/findIndex';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
 import React, {forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState} from 'react';
-import {AccessibilityInfo, FlatList, FlatListProps, Text, View, ViewStyle} from 'react-native';
+import {AccessibilityInfo, FlatList, FlatListProps, View, ViewStyle} from 'react-native';
 
 import {extractCalendarProps, extractHeaderProps} from '../componentUpdater';
 import {parseDate, toMarkingFormat, xdateToData} from '../interface';
@@ -132,14 +132,6 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
       const rangeDate = initialDate.current?.clone().addMonths(i - pastScrollRange, true);
       months.push(rangeDate);
     }
-    console.log('CalendarList items generated:', {
-      totalItems: months.length,
-      pastScrollRange,
-      futureScrollRange,
-      initialDate: initialDate.current?.toString(),
-      firstItem: months[0]?.toString(),
-      lastItem: months[months.length - 1]?.toString()
-    });
     return months;
   }, [pastScrollRange, futureScrollRange]);
 
@@ -239,24 +231,13 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
   }, []);
 
   const isDateInRange = useCallback((date) => {
-    const result = (() => {
-      for (let i = -range.current; i <= range.current; i++) {
-        const newMonth = currentMonth?.clone().addMonths(i, true);
-        if (sameMonth(date, newMonth)) {
-          return true;
-        }
+    for (let i = -range.current; i <= range.current; i++) {
+      const newMonth = currentMonth?.clone().addMonths(i, true);
+      if (sameMonth(date, newMonth)) {
+        return true;
       }
-      return false;
-    })();
-    
-    console.log('isDateInRange check:', {
-      date: date?.toString(),
-      currentMonth: currentMonth?.toString(),
-      range: range.current,
-      result
-    });
-    
-    return result;
+    }
+    return false;
   }, [currentMonth]);
 
   const renderItem = useCallback(({item}: {item: XDate}) => {
@@ -265,19 +246,7 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
     const testId = `${testID}.item_${year}-${month}`;
     const onHeaderLayoutToPass = shouldMeasureHeader.current ? onHeaderLayout : undefined;
     shouldMeasureHeader.current = false;
-    
-    console.log('CalendarList renderItem:', {
-      dateString,
-      testId,
-      item: item.toString(),
-      visible: isDateInRange(item),
-      calendarProps: Object.keys(calendarProps),
-      markedDates: getMarkedDatesForItem(item)
-    });
-    
     return (
-      <>
-      <Text>Debug {item.toString()}</Text>
       <CalendarListItem
         {...calendarProps}
         testID={testId}
@@ -292,9 +261,8 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
         visible={isDateInRange(item)}
         onHeaderLayout={onHeaderLayoutToPass}
       />
-      </>
     );
-  }, [horizontal, calendarStyle, calendarWidth, calendarHeight, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
+  }, [horizontal, calendarStyle, calendarWidth, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
 
   const renderStaticHeader = () => {
     if (shouldUseStaticHeader) {
@@ -342,15 +310,6 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
       onViewableItemsChanged
     }
   ]);
-
-  console.log('CalendarList render:', {
-    itemsLength: items.length,
-    initialDateIndex,
-    currentMonth: currentMonth?.toString(),
-    calendarSize,
-    horizontal,
-    listStyle: listStyle
-  });
 
   return (
     <View style={style.current.flatListContainer} testID={testID}>
