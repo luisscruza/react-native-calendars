@@ -610,32 +610,34 @@ const ExpandableCalendar = forwardRef<ExpandableCalendarRef, ExpandableCalendarP
 
   const renderCalendarList = () => {
     return (
+      <>
       <Text>CalendarList removed for testing purposes</Text>
-      // <CalendarList
-      //   testID={`${testID}.calendarList`}
-      //   horizontal={horizontal}
-      //   firstDay={firstDay}
-      //   calendarStyle={calendarStyle}
-      //   onHeaderLayout={onHeaderLayout}
-      //   {...others}
-      //   current={date}
-      //   theme={themeObject}
-      //   ref={calendarList}
-      //   onDayPress={_onDayPress}
-      //   onVisibleMonthsChange={onVisibleMonthsChange}
-      //   pagingEnabled
-      //   scrollEnabled={isOpen}
-      //   hideArrows={shouldHideArrows}
-      //   onPressArrowLeft={_onPressArrowLeft}
-      //   onPressArrowRight={_onPressArrowRight}
-      //   hideExtraDays={!horizontal && isOpen}
-      //   renderArrow={_renderArrow}
-      //   staticHeader
-      //   numberOfDays={numberOfDays}
-      //   headerStyle={_headerStyle}
-      //   timelineLeftInset={timelineLeftInset}
-      //   context={_context}
-      // />
+      <CalendarList
+        testID={`${testID}.calendarList`}
+        horizontal={horizontal}
+        firstDay={firstDay}
+        calendarStyle={calendarStyle}
+        onHeaderLayout={onHeaderLayout}
+        {...others}
+        current={date}
+        theme={themeObject}
+        ref={calendarList}
+        onDayPress={_onDayPress}
+        onVisibleMonthsChange={onVisibleMonthsChange}
+        pagingEnabled
+        scrollEnabled={isOpen}
+        hideArrows={shouldHideArrows}
+        onPressArrowLeft={_onPressArrowLeft}
+        onPressArrowRight={_onPressArrowRight}
+        hideExtraDays={!horizontal && isOpen}
+        renderArrow={_renderArrow}
+        staticHeader
+        numberOfDays={numberOfDays}
+        headerStyle={_headerStyle}
+        timelineLeftInset={timelineLeftInset}
+        context={_context}
+      />
+      </>
     );
   };
 
