@@ -150,8 +150,9 @@ const ExpandableCalendar = forwardRef<ExpandableCalendarRef, ExpandableCalendarP
         layout: {height}
       }
     }: LayoutChangeEvent) => {
+      const _height = (height || DEFAULT_HEADER_HEIGHT) + 5;
       if (height !== headerHeight) {
-        setHeaderHeight(height || DEFAULT_HEADER_HEIGHT);
+        setHeaderHeight(_height);
       }
       shouldMeasureHeader.current = false;
     },

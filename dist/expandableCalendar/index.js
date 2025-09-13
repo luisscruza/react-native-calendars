@@ -83,8 +83,9 @@ const ExpandableCalendar = forwardRef((props, ref) => {
     const [headerHeight, setHeaderHeight] = useState(0);
     const shouldMeasureHeader = useRef(true);
     const onHeaderLayout = useCallback(({ nativeEvent: { layout: { height } } }) => {
+        const _height = (height || DEFAULT_HEADER_HEIGHT) + 5;
         if (height !== headerHeight) {
-            setHeaderHeight(height || DEFAULT_HEADER_HEIGHT);
+            setHeaderHeight(_height);
         }
         shouldMeasureHeader.current = false;
     }, [headerHeight]);
