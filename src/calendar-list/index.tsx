@@ -251,7 +251,7 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
       <Text>Debug {item.toString()}</Text>
       <CalendarListItem
         {...calendarProps}
-        // testID={testId}
+        testID={testId}
         markedDates={getMarkedDatesForItem(item)}
         item={item}
         // style={calendarStyle}

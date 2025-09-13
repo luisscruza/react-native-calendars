@@ -2,7 +2,7 @@ import findIndex from 'lodash/findIndex';
 import PropTypes from 'prop-types';
 import XDate from 'xdate';
 import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
-import { AccessibilityInfo, FlatList, View } from 'react-native';
+import { AccessibilityInfo, FlatList, Text, View } from 'react-native';
 import { extractCalendarProps, extractHeaderProps } from '../componentUpdater';
 import { parseDate, toMarkingFormat, xdateToData } from '../interface';
 import { page, sameDate, sameMonth } from '../dateutils';
@@ -168,12 +168,17 @@ const CalendarList = (props, ref) => {
         const testId = `${testID}.item_${year}-${month}`;
         const onHeaderLayoutToPass = shouldMeasureHeader.current ? onHeaderLayout : undefined;
         shouldMeasureHeader.current = false;
-        return (React.createElement(CalendarListItem, Object.assign({}, calendarProps, { testID: testId, markedDates: getMarkedDatesForItem(item), item: item, style: calendarStyle, 
-            // @ts-expect-error - type mismatch - ScrollView's 'horizontal' is nullable
-            horizontal: horizontal, 
-            // calendarWidth={calendarWidth}
-            // calendarHeight={calendarHeight}
-            scrollToMonth: scrollToMonth, visible: isDateInRange(item), onHeaderLayout: onHeaderLayoutToPass })));
+        return (React.createElement(React.Fragment, null,
+            React.createElement(Text, null,
+                "Debug ",
+                item.toString()),
+            React.createElement(CalendarListItem, Object.assign({}, calendarProps, { testID: testId, markedDates: getMarkedDatesForItem(item), item: item, 
+                // style={calendarStyle}
+                // @ts-expect-error - type mismatch - ScrollView's 'horizontal' is nullable
+                horizontal: horizontal, 
+                // calendarWidth={calendarWidth}
+                // calendarHeight={calendarHeight}
+                scrollToMonth: scrollToMonth, visible: isDateInRange(item), onHeaderLayout: onHeaderLayoutToPass }))));
     }, [horizontal, calendarStyle, calendarWidth, testID, getMarkedDatesForItem, isDateInRange, calendarProps]);
     const renderStaticHeader = () => {
         if (shouldUseStaticHeader) {
