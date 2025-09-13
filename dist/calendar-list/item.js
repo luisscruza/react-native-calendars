@@ -60,8 +60,10 @@ const CalendarListItem = React.memo((props) => {
         }
     }, [onPressArrowRight, scrollToMonth]);
     if (!visible) {
+        console.log('CalendarListItem not visible, rendering placeholder text for:', dateString);
         return (React.createElement(Text, { style: textStyle }, dateString));
     }
+    console.log('CalendarListItem visible, rendering Calendar for:', dateString);
     return (React.createElement(Calendar, Object.assign({ hideArrows: true, hideExtraDays: true }, calendarProps, { current: dateString, style: calendarStyle, headerStyle: horizontal ? headerStyle : undefined, disableMonthChange: true, onPressArrowLeft: horizontal ? _onPressArrowLeft : onPressArrowLeft, onPressArrowRight: horizontal ? _onPressArrowRight : onPressArrowRight })));
 });
 export default CalendarListItem;

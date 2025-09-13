@@ -239,13 +239,24 @@ const CalendarList = (props: CalendarListProps & ContextProp, ref: any) => {
   }, []);
 
   const isDateInRange = useCallback((date) => {
-    for (let i = -range.current; i <= range.current; i++) {
-      const newMonth = currentMonth?.clone().addMonths(i, true);
-      if (sameMonth(date, newMonth)) {
-        return true;
+    const result = (() => {
+      for (let i = -range.current; i <= range.current; i++) {
+        const newMonth = currentMonth?.clone().addMonths(i, true);
+        if (sameMonth(date, newMonth)) {
+          return true;
+        }
       }
-    }
-    return false;
+      return false;
+    })();
+    
+    console.log('isDateInRange check:', {
+      date: date?.toString(),
+      currentMonth: currentMonth?.toString(),
+      range: range.current,
+      result
+    });
+    
+    return result;
   }, [currentMonth]);
 
   const renderItem = useCallback(({item}: {item: XDate}) => {

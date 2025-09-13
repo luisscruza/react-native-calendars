@@ -162,13 +162,22 @@ const CalendarList = (props, ref) => {
         };
     }, []);
     const isDateInRange = useCallback((date) => {
-        for (let i = -range.current; i <= range.current; i++) {
-            const newMonth = currentMonth === null || currentMonth === void 0 ? void 0 : currentMonth.clone().addMonths(i, true);
-            if (sameMonth(date, newMonth)) {
-                return true;
+        const result = (() => {
+            for (let i = -range.current; i <= range.current; i++) {
+                const newMonth = currentMonth === null || currentMonth === void 0 ? void 0 : currentMonth.clone().addMonths(i, true);
+                if (sameMonth(date, newMonth)) {
+                    return true;
+                }
             }
-        }
-        return false;
+            return false;
+        })();
+        console.log('isDateInRange check:', {
+            date: date === null || date === void 0 ? void 0 : date.toString(),
+            currentMonth: currentMonth === null || currentMonth === void 0 ? void 0 : currentMonth.toString(),
+            range: range.current,
+            result
+        });
+        return result;
     }, [currentMonth]);
     const renderItem = useCallback(({ item }) => {
         const dateString = toMarkingFormat(item);
